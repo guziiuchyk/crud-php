@@ -30,6 +30,10 @@ if(!empty($_SESSION["validation"])){
 
 $password = password_hash($password, PASSWORD_DEFAULT);
 
-mysqli_query($connect,"INSERT INTO `users` (name, email, password) VALUES ('$name', '$email', '$password')");
+$sql = "INSERT INTO `users` (name, email, password) VALUES (?, ?, ?)";
+$stmt = $connect->prepare($sql);
+$stmt->bind_param("sss", $name, $email, $password);
+$stmt->execute();
+$stmt->close();
 
 redirect("../login.php");

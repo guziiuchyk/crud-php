@@ -1,6 +1,10 @@
 <?php
 
+
 require_once "utils/helpers.php";
+
+$title = "Login";
+
 require_once "blocks/header.php";
 ?>
 

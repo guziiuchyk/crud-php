@@ -1,6 +1,9 @@
 <?php
 
 require_once "utils/helpers.php";
+
+$title = "Register";
+
 require_once "blocks/header.php";
 ?>
 
