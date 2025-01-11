@@ -47,10 +47,37 @@ function getMessage(string $key): string
     return $message;
 }
 
-function loginRequired(): void
+function loginRequired(bool $isValid = false): void
 {
-    if (!isset($_SESSION['id'])) {
-        addMessage("error", "You need to login first");
-        redirect('/testphp/login.php');
+    global $connect;
+    if(!isset($_COOKIE["token"])){
+        redirect("/login.php");
+    }
+
+    if(!$isValid){
+        return;
+    }
+
+    $sql = "SELECT * FROM tokens WHERE token = ?";
+    $stmt = $connect->prepare($sql);
+    $stmt->bind_param("i", $_COOKIE["token"]);
+    $stmt->execute();
+    $stmt->bind_result($id, $userId, $token, $expireIn);
+    if (!$stmt->fetch()) {
+        redirect("/login.php");
+    }
+    $stmt->close();
+
+
+}
+
+function adminRequired(): void
+{
+    global $connect;
+    loginRequired();
+    $user = mysqli_query($connect, "SELECT * FROM `users` WHERE `id`='" . $_SESSION['id'] . "'");
+    $user = mysqli_fetch_assoc($user);
+    if (!$user['role'] == "ADMIN") {
+        redirect('/login.php');
     }
 }

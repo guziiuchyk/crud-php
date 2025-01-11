@@ -19,6 +19,8 @@ if (!$good) {
     header("Location: index.php");
 }
 
+$title = "Edit good";
+
 require_once 'blocks/header.php';
 ?>
 <form action="goods/update.php" method="post">
