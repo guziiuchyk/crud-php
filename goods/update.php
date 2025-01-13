@@ -4,7 +4,7 @@ global $connect;
 require_once '../utils/connect.php';
 require_once '../utils/helpers.php';
 
-loginRequired();
+loginRequired(true);
 
 $id = trim($_POST['id']);
 $name = trim($_POST['name']);
@@ -16,9 +16,21 @@ if ($id == "" || !is_numeric($id)) {
 }
 
 if($name == "" || $description == "" || $price == ""){
-    redirect('../index.php');
+    addValidationError("updateError","All fields are required");
+    redirect('../update.php?id='.$id);
 }
 
-mysqli_query($connect, "UPDATE `goods` SET `name` = '$name', `description` = '$description', `price` = '$price' WHERE `goods`.`id` = $id ");
+if(!is_numeric($price)){
+    addValidationError("updateError","Price must be a number");
+    redirect('../update.php?id='.$id);
+}
+
+$sql = "UPDATE `goods` SET `name` = ?, `description` = ?, `price` = ? WHERE `goods`.`id` = ?";
+
+$stmt = $connect->prepare($sql);
+
+$stmt->bind_param("ssii", $name, $description, $price, $id);
+$stmt->execute();
+$stmt->close();
 
 redirect('../index.php');

@@ -12,16 +12,27 @@ if ($id == "" || !is_numeric($id)) {
 
 require_once "utils/connect.php";
 
-$good = mysqli_query($connect, "SELECT * FROM `goods` WHERE `id`='$id'");
-$good = mysqli_fetch_assoc($good);
+$sql = "SELECT * FROM `goods` WHERE `id`= ?";
+$stmt = $connect->prepare($sql);
+$stmt->bind_param('i', $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$good = $result->fetch_assoc();
+$stmt->close();
 
 if (!$good) {
-    header("Location: index.php");
+    echo "<h1>GOOD NOT FOUND</h1>";
+    echo "<a href='./index.php'>GO BACK</a>";
+    exit;
 }
 
-$title = "Edit good";
+$title = "Edit good $id";
 
 require_once 'blocks/header.php';
+?>
+<h1>Update good with id=<?=$_GET["id"]?></h1>
+<?php
+echo '<p class="error">' . getValidationError() . '</p>'
 ?>
 <form action="goods/update.php" method="post">
     <input type="hidden" name="id" value="<?=$good["id"]?>"/>

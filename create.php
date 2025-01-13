@@ -5,10 +5,6 @@ require_once 'utils/helpers.php';
 
 loginRequired();
 
-
-$goods = mysqli_query($connect, "SELECT * FROM `goods`");
-$goods = mysqli_fetch_all($goods);
-
 $title = "Create good";
 
 require_once 'blocks/header.php';

@@ -6,8 +6,15 @@ require_once 'utils/helpers.php';
 loginRequired();
 
 
-$goods = mysqli_query($connect, "SELECT * FROM `goods`");
-$goods = mysqli_fetch_all($goods);
+$sql = "SELECT * FROM goods";
+
+$stmt = $connect->prepare($sql);
+$stmt->execute();
+$result = $stmt->get_result();
+$goods = [];
+while ($row = $result->fetch_assoc()) {
+    $goods[] = $row;
+}
 
 $title = "Goods";
 
@@ -28,8 +35,8 @@ require_once 'blocks/header.php';
             foreach ($good as $param) {
                 echo "<td>" . $param . "</td>";
             }
-            echo "<td><a href='update.php?id=$good[0]'>update</a></td>";
-            echo "<td><a href='goods/delete.php?id=$good[0]'>delete</a></td>";
+            echo "<td><a href='update.php?id=".$good["id"]."'>update</a></td>";
+            echo "<td><a href='goods/delete.php?id=".$good["id"]."'>delete</a></td>";
             echo "</tr>";
         } ?>
     </table>

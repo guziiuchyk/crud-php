@@ -2,7 +2,7 @@
 global $connect;
 require_once '../utils/helpers.php';
 
-loginRequired();
+loginRequired(true);
 
 
 $id = $_GET['id'];
@@ -12,5 +12,10 @@ if ($id == "" || !is_numeric($id)) {
 
 require_once "../utils/connect.php";
 
-mysqli_query($connect, "DELETE FROM goods WHERE `goods`.`id` = $id");
+$sql ="DELETE FROM goods WHERE `goods`.`id` = ?";
+$stmt = $connect->prepare($sql);
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$stmt->close();
+
 redirect('../index.php');

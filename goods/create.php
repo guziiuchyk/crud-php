@@ -3,7 +3,7 @@ global $connect;
 require_once '../utils/connect.php';
 require_once '../utils/helpers.php';
 
-loginRequired();
+loginRequired(true);
 
 $name = trim($_POST['name']);
 $description = trim($_POST['description']);
@@ -19,6 +19,10 @@ if(!is_numeric($price)){
     redirect("../index.php");
 }
 
-mysqli_query($connect, "INSERT INTO `goods` (name, description, price, created_by) VALUES ('$name', '$description', '$price', ".$_SESSION["id"].")");
+$sql = "INSERT INTO `goods` (name, description, price, created_by) VALUES (?, ?, ?, ?)";
+$stmt = $connect->prepare($sql);
+$stmt->bind_param("ssii", $name, $description, $price, $_SESSION["id"]);
+$stmt->execute();
+$stmt->close();
 
 redirect("../index.php");
